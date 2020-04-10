@@ -1,65 +1,21 @@
 def estimator(data):
-
-  periodtype = data['periodType']
-  time_to_elapse = data['timeToElapse']
-  reported_cases = data['reportedCases']
-  hospital_beds = data['totalHospitalBeds']
-  income = data['region']['avgDailyIncomeInUSD']
-  income_population = data['region']['avgDailyIncomePopulation']
-
-  impact_cases = reported_cases * 10
-  severe_cases = reported_cases * 50
-  available_beds = 0.35 * hospital_beds
-
-
-  #calculate the number of days
-  def number_of_days(periodtype, time_to_elapse):
-    if periodtype == 'days':
-      days = time_to_elapse
-    elif periodtype == 'weeks':
-      days = time_to_elapse * 7
-    elif periodtype == 'months':
-      days = time_to_elapse * 30
-    return days
-
-  #infections by requested time, where case = currentlyInfected
-  def infected_till_date(case):
-    days = number_of_days(periodtype, time_to_elapse) // 3
-    return case * (2 ** days)
-
-  def severe_by_req_time(case):
-    return 0.15 * infected_till_date(case)
-
-  def hospital_bedsby_time(case):
-    return int(available_beds - severe_by_req_time(case))
-
-  def money_lost(case):
-    inf = infected_till_date(case)
-    days = number_of_days(periodtype, time_to_elapse)
-    return round(inf * income_population * income * days, 2)
-
-
-
-  result = {
-    "data":data,
-    "impact": {
-      "currentlyInfected": impact_cases,
-      "infectionsByRequestedTime": infected_till_date(impact_cases),
-      "severeCasesByRequestedTime": int(severe_by_req_time(impact_cases)),
-      "hospitalBedsByRequestedTime": hospital_bedsby_time(impact_cases),
-      "casesForICUByRequestedTime": int(0.05 * infected_till_date(impact_cases)),
-      "casesForVentilatorsByRequestedTime":int(0.02 * infected_till_date(impact_cases)),
-      "dollarsInFlight": money_lost(impact_cases)
-    },
-    "severeImpact": {
-      "currentlyInfected": severe_cases,
-      "infectionsByRequestedTime": infected_till_date(severe_cases),
-      "severeCasesByRequestedTime": int(severe_by_req_time(severe_cases)),
-      "hospitalBedsByRequestedTime": hospital_bedsby_time(severe_cases),
-      "casesForICUByRequestedTime": int(0.05 * infected_till_date(severe_cases)),
-      "casesForVentilatorsByRequestedTime": int(0.02 * infected_till_date(severe_cases)),
-      "dollarsInFlight": money_lost(severe_cases)
-    }
-  }
-
-  return result
+    output = {'data':data, 'impact': {}, 'severeImpact': {}}
+    output['impact']['currentlyInfected'] = data['reportedCases'] * 10
+    output['severeImpact']['currentlyInfected'] = data['reportedCases'] * 50
+    if data['periodType'] == 'weeks':
+        data['timeToElapse'] = data['timeToElapse'] * 7
+    elif data['periodType'] == 'months':
+        data['timeToElapse'] = data['timeToElapse'] * 30
+    output['impact']['infectionsByRequestedTime'] = output['impact']['currentlyInfected'] * (2 ** (data['timeToElapse']//3))
+    output['severeImpact']['infectionsByRequestedTime'] = output['severeImpact']['currentlyInfected'] * (2 ** (data['timeToElapse']//3))
+    output['impact']['severeCasesByRequestedTime'] = int(15/100 * (output['impact']['infectionsByRequestedTime']))
+    output['severeImpact']['severeCasesByRequestedTime'] = int(15/100 * (output['severeImpact']['infectionsByRequestedTime']))
+    output['impact']['hospitalBedsByRequestedTime'] = int((35/100 * (data['totalHospitalBeds'])) - output['impact']['severeCasesByRequestedTime'])
+    output['severeImpact']['hospitalBedsByRequestedTime'] = int((35/100 * (data['totalHospitalBeds'])) - output['severeImpact']['severeCasesByRequestedTime'])
+    output['impact']['casesForICUByRequestedTime'] = int(5/100 * output['impact']['infectionsByRequestedTime'])
+    output['severeImpact']['casesForICUByRequestedTime'] = int(5/100 * output['severeImpact']['infectionsByRequestedTime'])
+    output['impact']['casesForVentilatorsByRequestedTime'] = int(2/100 * output['impact']['infectionsByRequestedTime'])
+    output['severeImpact']['casesForVentilatorsByRequestedTime'] = int(2/100 * output['severeImpact']['infectionsByRequestedTime'])
+    output['impact']['dollarsInFlight'] = int((output['impact']['infectionsByRequestedTime'] * data['region']['avgDailyIncomeInUSD'] * data['region']['avgDailyIncomePopulation']) /data['timeToElapse'])
+    output['severeImpact']['dollarsInFlight'] = int((output['severeImpact']['infectionsByRequestedTime'] * data['region']['avgDailyIncomeInUSD'] * data['region']['avgDailyIncomePopulation'])/data['timeToElapse'])
+    return output
