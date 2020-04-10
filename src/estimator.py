@@ -36,7 +36,9 @@ def estimator(data):
   def money_lost(case):
     inf = infected_till_date(case)
     days = number_of_days(periodtype, time_to_elapse)
-    return inf * income_population * income * days
+    return round(inf * income_population * income * days, 2)
+
+
 
   result = {
     "data":data,
@@ -47,7 +49,7 @@ def estimator(data):
       "hospitalBedsByRequestedTime": hospital_bedsby_time(impact_cases),
       "casesForICUByRequestedTime": int(0.05 * infected_till_date(impact_cases)),
       "casesForVentilatorsByRequestedTime":int(0.02 * infected_till_date(impact_cases)),
-      "dollarsInFlight": round(money_lost(impact_cases), 2)
+      "dollarsInFlight": money_lost(impact_cases)
     },
     "severeImpact": {
       "currentlyInfected": severe_cases,
@@ -56,7 +58,7 @@ def estimator(data):
       "hospitalBedsByRequestedTime": hospital_bedsby_time(severe_cases),
       "casesForICUByRequestedTime": int(0.05 * infected_till_date(severe_cases)),
       "casesForVentilatorsByRequestedTime": int(0.02 * infected_till_date(severe_cases)),
-      "dollarsInFlight": round(money_lost(severe_cases), 2)
+      "dollarsInFlight": money_lost(severe_cases)
     }
   }
 
