@@ -28,7 +28,35 @@ def json_api():
     "totalHospitalBeds": request.json['totalHospitalBeds']
   }
   
-  return jsonify(estimator(data))
+  headers = {
+    "Content-Type":'application/json',
+    "charset":'utf-8'
+  }
+  
+  return jsonify(estimator(data)), 200, headers
+
+@app.route('/api/v1/on-covid-19/json', methods=['POST'])
+def json_fallback_api():
+  data = {
+    "region": {
+      "name": request.json['region']['name'],
+      "avgAge": request.json['region']['avgAge'],
+      "avgDailyIncomeInUSD": request.json['region']['avgDailyIncomeInUSD'],
+      "avgDailyIncomePopulation": request.json['region']['avgDailyIncomePopulation']
+    },
+    "periodType": request.json['periodType'],
+    "timeToElapse": request.json['timeToElapse'],
+    "reportedCases": request.json['reportedCases'],
+    "population": request.json['population'],
+    "totalHospitalBeds": request.json['totalHospitalBeds']
+  }
+  
+  headers = {
+    "Content-Type":'application/json',
+    "charset":'utf-8'
+  }
+  
+  return jsonify(estimator(data)), 200, headers
 
 @app.route('/api/v1/on-covid-19/xml', methods=['POST'])
 def xml_api():
@@ -46,4 +74,9 @@ def xml_api():
     "totalHospitalBeds": request.json['totalHospitalBeds']
   }
   
-  return dicttoxml(estimator(data))
+  headers = {
+    "Content-Type":'text/xml',
+    "charset":'utf-8'
+  }
+  
+  return dicttoxml(estimator(data)), 200, headers
