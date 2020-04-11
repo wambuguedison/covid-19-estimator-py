@@ -27,4 +27,4 @@ def json_api():
     "totalHospitalBeds": request.json['totalHospitalBeds']
   }
   
-  return estimator(data)
+  return jsonify(estimator(data))
