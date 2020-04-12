@@ -1,6 +1,6 @@
 #!flask/bin/python
 from flask import Flask, jsonify, request
-from dicttoxml import dicttoxml
+from dicttoxml import dicttoxml as xml
 
 from src.estimator import estimator
 
@@ -79,4 +79,4 @@ def xml_api():
     "charset":'utf-8'
   }
   
-  return dicttoxml(estimator(data)), 200, headers
+  return xml(estimator(data)), 200, headers
