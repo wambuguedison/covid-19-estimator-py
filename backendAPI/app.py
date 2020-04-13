@@ -113,7 +113,7 @@ def after_request(response):
   print('example log')
   print(duration, method, url, status)
   log = str(method + "  " + url + "    " + status + "  " + duration + "\n")
-  with open(os.path.abspath('backendAPI/logs.txt'), "w") as logs:
+  with open(os.path.abspath('backendAPI/logs.txt'), "a") as logs:
     logs.write(log)
   print('end log')
   return response
