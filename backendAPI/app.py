@@ -1,6 +1,7 @@
 #!flask/bin/python
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, g
 from dicttoxml import dicttoxml
+import time
 
 from src.estimator import estimator
 
@@ -10,7 +11,7 @@ app = Flask(__name__)
 def index():
   return jsonify({
     'message': "This is the covid 19 estimator api" 
-  });
+  })
 
 @app.route('/api/v1/on-covid-19', methods=['POST'])
 def json_api():
@@ -82,3 +83,19 @@ def xml_api():
   estimate = estimator(data)
   
   return dicttoxml(estimate), 200, headers
+  
+@app.before_request
+def before_timer():
+  g.start = time.time()
+
+@app.after_request
+def after_request(response):
+  now = time.time()
+  duration = round((now - g.start)*100)
+  method = request.method
+  url = request.path
+  status = response.status
+  print('example log')
+  print(duration, method, url, status)
+  print('end log')
+  return response
