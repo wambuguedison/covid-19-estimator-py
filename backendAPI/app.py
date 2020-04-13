@@ -84,6 +84,17 @@ def xml_api():
   
   return dicttoxml(estimate), 200, headers
   
+@app.route('/api/v1/on-covid-19/logs', methods=['GET'])
+def logs():
+  with open('myfile.txt') as in_file:
+    content = in_file.read()
+  
+  headers = {
+    "Content-Type":'text/plain',
+    "charset":'utf-8'
+  }
+  return content, 200, headers
+
 @app.before_request
 def before_timer():
   g.start = time.time()
@@ -92,10 +103,16 @@ def before_timer():
 def after_request(response):
   now = time.time()
   duration = round((now - g.start)*100)
+  duration = str(duration)+"ms"
+  duration = duration.zfill(4)
   method = request.method
   url = request.path
   status = response.status
+  status = str(status)[:3]
   print('example log')
   print(duration, method, url, status)
+  log = str(method + "  " + url + "    " + status + "  " + duration + "\n")
+  with open("backendAPI/logs.txt", "w") as logs:
+    logs.write(log)
   print('end log')
   return response
