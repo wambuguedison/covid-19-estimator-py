@@ -1,0 +1,5 @@
+GET  /favicon.ico    404  00ms
+GET  /    200  00ms
+GET  /favicon.ico    404  00ms
+GET  /    200  00ms
+GET  /    200  00ms
