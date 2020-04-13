@@ -2,6 +2,7 @@
 from flask import Flask, jsonify, request, g
 from dicttoxml import dicttoxml
 import time
+import os
 
 from src.estimator import estimator
 
@@ -86,7 +87,7 @@ def xml_api():
   
 @app.route('/api/v1/on-covid-19/logs', methods=['GET'])
 def logs():
-  with open('myfile.txt') as in_file:
+  with open(os.path.abspath('backendAPI/logs.txt')) as in_file:
     content = in_file.read()
   
   headers = {
@@ -112,7 +113,7 @@ def after_request(response):
   print('example log')
   print(duration, method, url, status)
   log = str(method + "  " + url + "    " + status + "  " + duration + "\n")
-  with open("backendAPI/logs.txt", "w") as logs:
+  with open(os.path.abspath('backendAPI/logs.txt'), "w") as logs:
     logs.write(log)
   print('end log')
   return response
