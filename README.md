@@ -1,4 +1,6 @@
-# #BuildForSDG Cohort-1 Python Assessment
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/81848c8b448f49929abfcd406ee2d35b)](https://www.codacy.com/manual/wambuguedison/covid-19-estimator-py?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=wambuguedison/covid-19-estimator-py&amp;utm_campaign=Badge_Grade)
+
+# #BuildForSDG Chort-1 Python Assessment
 
 > Build an overly simplified COVID-19 infection impact estimator
 
